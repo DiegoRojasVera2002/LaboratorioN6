@@ -64,95 +64,59 @@ Tras analizar los requerimientos, identificamos que el SGEM es un sistema críti
 
 ## 3.3 Creación de Vistas Arquitectónicas
 
-### Vista Lógica
-La vista lógica representa la estructura funcional del sistema, mostrando cómo se organiza el software en términos de componentes principales y sus relaciones.
+### Diagrama 1: Vista Física
+Este diagrama muestra la infraestructura física del sistema con un enfoque híbrido (cloud y on-premises):
+* **Dispositivos**: Se dividen en Dispositivos Móviles y Estaciones de Trabajo
+* **AWS Cloud**:
+   * API Gateway como punto de entrada
+   * EC2 para los servidores de aplicación
+   * RDS para la base de datos
+   * S3 para almacenamiento
+   * SQS para la cola de mensajes
+* **On-Premises**:
+   * Balanceador de Carga
+   * Servidor de Aplicaciones
+   * Base de Datos Principal
 
-#### Componentes Principales:
-1. **Núcleo de Gestión de Emergencias**
-   - Módulo de Recepción de Llamadas
-   - Módulo de Clasificación y Priorización
-   - Módulo de Asignación de Recursos
-   - Motor de Reglas de Negocio
+Este diseño implementa la decisión arquitectónica de utilizar una infraestructura híbrida con redundancia, donde los sistemas críticos tienen respaldo local y capacidades escalables en la nube.
 
-2. **Servicios de Gestión de Recursos**
-   - Servicio de Ambulancias
-   - Servicio de Personal Médico
-   - Servicio de Camas Hospitalarias
+### Diagrama 2: Vista Lógica
+El diagrama representa la organización de los componentes lógicos del sistema siguiendo el patrón Microkernel:
+* **InterfazUsuario**: Clase abstracta con cuatro especializaciones (Operador, PersonalMédico, Hospital, Administrador)
+* **NúcleoGestiónEmergencias**: El componente central del sistema
+* **Servicios Satélite**:
+   * ServicioGestiónRecursos
+   * ServicioMonitoreo
+   * ServicioNotificaciones
+   * ServicioReportes
+* **SistemaBD**: Para persistencia de datos
 
-3. **Servicios de Monitoreo**
-   - Servicio de Geolocalización
-   - Servicio de Telemetría de Vehículos
-   - Servicio de Análisis en Tiempo Real
+El diagrama muestra claramente las relaciones entre componentes:
+* "controla" entre interfaces y núcleo
+* "genera" entre administrador y reportes
+* "agregación", "composición" y "dependencia" entre servicios
 
-4. **Servicios de Soporte**
-   - Servicio de Notificaciones
-   - Servicio de Reportes y Estadísticas
-   - Servicio de Gestión de Usuarios
+### Diagrama 3: Vista de Desarrollo
+Este diagrama muestra cómo se estructura el software en términos de capas y componentes:
+* **Frontend**: Aplicación Web y Aplicación Móvil
+* **Backend**:
+   * API REST como punto de entrada
+   * Servicios Core (Emergencias, Recursos, Notificaciones)
+   * Capa de Infraestructura (Logs, Autenticación, Cola de Mensajes)
+   * Capa de Datos (Acceso a Datos, Repositorios)
 
-5. **Interfaces Externas**
-   - API para Sistemas Hospitalarios
-   - API para Servicios de Emergencia
-   - API para Autoridades de Salud
+Esta estructura sigue un patrón de arquitectura en capas con una clara separación de responsabilidades.
 
-### Vista Física
-La vista física representa cómo se despliega el software en la infraestructura física o virtual.
+### Diagrama 4: Vista de Procesos
+El diagrama muestra el flujo de trabajo del sistema desde la recepción de una emergencia hasta su resolución:
+* **Inicio**: Operadores del Centro de Control
+* **Validación**: Verificación de la emergencia
+* **Procesamiento**: Ingreso al SGEM, validación, asignación de recursos
+* **Ejecución**: Despacho de ambulancias y personal
+* **Confirmación**: Validación por el equipo médico
+* **Cierre**: Atención médica, traslado y confirmación de recepción
 
-#### Componentes de Infraestructura:
-1. **Servidores Principales (On-premises)**
-   - Servidor de Aplicaciones Núcleo
-   - Servidor de Base de Datos Primario
-   - Servidor de Respaldo en Caliente
-
-2. **Infraestructura en Nube**
-   - Servicios de Escalado Automático
-   - Base de Datos Distribuida
-   - Almacenamiento de Respaldo
-
-3. **Redes y Comunicación**
-   - Red LAN Redundante
-   - Conexiones WAN con Respaldo
-   - Infraestructura VPN para Acceso Remoto
-
-4. **Dispositivos de Usuario Final**
-   - Estaciones de Trabajo de Operadores
-   - Dispositivos Móviles para Personal Médico
-   - Pantallas de Monitoreo en Hospitales
-
-### Vista de Procesos
-La vista de procesos muestra la dinámica del sistema, representando cómo los componentes interactúan entre sí durante la ejecución.
-
-#### Procesos Principales:
-1. **Proceso de Gestión de Emergencias**
-   - Recepción de llamada → Clasificación → Asignación → Seguimiento → Cierre
-
-2. **Proceso de Actualización de Estado de Recursos**
-   - Monitoreo continuo → Actualización de disponibilidad → Notificación de cambios
-
-3. **Proceso de Notificaciones**
-   - Detección de evento → Selección de destinatarios → Entrega de notificación → Confirmación
-
-4. **Proceso de Generación de Reportes**
-   - Recolección de datos → Procesamiento → Generación de visualizaciones → Distribución
-
-### Vista de Implementación
-La vista de implementación muestra cómo se estructura el software en términos de componentes de implementación y sus dependencias.
-
-#### Componentes de Implementación:
-1. **Bibliotecas y Frameworks**
-   - Framework de Desarrollo Web
-   - Bibliotecas de Comunicación en Tiempo Real
-   - Bibliotecas de Geolocalización
-   - Framework de Seguridad
-
-2. **Servicios de Middleware**
-   - Bus de Servicios Empresariales
-   - Sistema de Mensajería
-   - Caché Distribuida
-
-3. **Bases de Datos**
-   - Base de Datos Relacional para Datos Estructurados
-   - Base de Datos NoSQL para Datos en Tiempo Real
-   - Almacén de Datos para Reportes
+Este flujo muestra las interacciones entre los diferentes actores y el sistema durante una emergencia.
 
 ## 3.4 Aplicación de Patrones Arquitectónicos
 
